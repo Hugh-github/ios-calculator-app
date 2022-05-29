@@ -12,6 +12,9 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var superStackView: UIStackView!
     
+    var totalExpression: String = ""
+    var extraNumber: String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,6 +26,19 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func tapNumberButton(_ sender: UIButton) {
+        guard let number = sender.currentTitle else { return }
+        
+        if  extraNumber.isEmpty && checkRepeatZero(input: number) {
+            operandLabel.text = "0"
+        } else {
+            extraNumber += number
+            totalExpression += number
+            operandLabel.text = extraNumber
+        }
+    }
+    
+    // 스크롤 뷰에 추가가 되는지 확인하기 위해 임시로 작성
     @IBAction func tapResultButton(_ sender: Any) {
         let subStackView = createSubStackView()
         let operatorLabel = createOperatorLabel(sign: "+")
@@ -33,6 +49,12 @@ class ViewController: UIViewController {
         superStackView.addArrangedSubview(subStackView)
     }
     
+    func checkRepeatZero(input: String) -> Bool {
+        if input == "0" || input == "00" {
+            return true
+        }
+        return false
+    }
     
     func createSubStackView() -> UIStackView {
         let stackView: UIStackView = {
