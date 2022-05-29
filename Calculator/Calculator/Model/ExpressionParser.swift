@@ -9,10 +9,10 @@ enum ExpressionParser {
     static func parse(from input: String) -> Formula {
         var formula = Formula()
         
-        input.split(with: " ").filter {
-            Double($0) == nil
+        input.filter {
+            Double(String($0)) == nil
         }.forEach {
-            guard let sign = Operator(rawValue: Character($0)) else { return }
+            guard let sign = Operator(rawValue: $0) else { return }
             formula.operators.enqueue(sign)
         }
         
@@ -26,9 +26,14 @@ enum ExpressionParser {
     }
     
     static private func componentsByOperators(from input: String) -> [String] {
-        let abc = input.split(with: " ").filter {
-            Double($0) != nil
+        var newInput = input
+            
+        let sign = Operator.allCases.map {
+            $0.rawValue
         }
-        return abc
+        sign.forEach {
+            newInput = newInput.replacingOccurrences(of: String($0), with: " ")
+        }
+        return newInput.split(with: " ")
     }
 }
