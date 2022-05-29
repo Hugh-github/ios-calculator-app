@@ -31,11 +31,31 @@ class ViewController: UIViewController {
         
         if  extraNumber.isEmpty && checkRepeatZero(input: number) {
             operandLabel.text = "0"
+        } else if extraNumber.isEmpty && number == "." {
+            extraNumber += "0."
+            totalExpression += "0."
+            operandLabel.text = extraNumber
         } else {
             extraNumber += number
             totalExpression += number
             operandLabel.text = extraNumber
         }
+        print(totalExpression)
+    }
+    
+    @IBAction func tapOperatorButton(_ sender: UIButton) {
+        guard let sign = sender.currentTitle else { return }
+
+        if !totalExpression.isEmpty && operandLabel.text == "0" {
+            operatorLabel.text = sign
+            var array = totalExpression.map { String($0) }
+            array.removeLast()
+            array.append(sign)
+            totalExpression = array.joined()
+            return
+        }
+        addSubStackView()
+        updateProperty(text: sign)
     }
     
     // 스크롤 뷰에 추가가 되는지 확인하기 위해 임시로 작성
@@ -73,6 +93,7 @@ class ViewController: UIViewController {
             let label = UILabel()
             label.text = operand
             label.textColor = .white
+            label.textAlignment = .right
             return label
         }()
         return operandLabel
@@ -83,9 +104,29 @@ class ViewController: UIViewController {
             let label = UILabel()
             label.text = sign
             label.textColor = .white
+            label.textAlignment = .right
             return label
         }()
         return operatorLabel
+    }
+    
+    func addSubStackView() {
+        guard let sign = operatorLabel.text else { return }
+        
+        let subStackView = createSubStackView()
+        let operatorLabel = createOperatorLabel(sign: sign)
+        let operandLabel = createOperandLabel(operand: extraNumber)
+            
+        subStackView.addArrangedSubview(operatorLabel)
+        subStackView.addArrangedSubview(operandLabel)
+        superStackView.addArrangedSubview(subStackView)
+    }
+    
+    func updateProperty(text: String) {
+        extraNumber = ""
+        totalExpression += text
+        operatorLabel.text = text
+        operandLabel.text = "0"
     }
 }
 
